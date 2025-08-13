@@ -1,0 +1,40 @@
+/* Your Custom CSS Goes here */
+
+.container-auth{
+    background-color: #e7ecf8;
+}
+
+.gambar{
+    display: block;
+    width: 60%;
+    margin: auto;
+}
+
+.registrasi .logo a{
+    display: flex;
+    padding-left: 70px;
+    background: url('../images/neptune.png') no-repeat;
+    height: 50px;
+    background-size: 50px;
+    align-items: center;
+    text-decoration: none;
+    color: #5c4040;
+    font-size: 21px;
+    font-weight: bold;
+}
+
+.jadwal a{
+    text-decoration: none;
+}
+
+.jadwal a:hover{
+    text-decoration: none;
+    background-color: rgba(135, 135, 135, 0.11);
+}
+
+.text-error{
+    color: #e07a6f;
+    font-size: small;
+    margin-bottom: 0;
+    padding: 0;
+  }

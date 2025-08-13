@@ -1,0 +1,303 @@
+@extends('layout.backend.core')
+
+@section('content')
+
+<div class="app-content">
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="page-description d-flex align-items-center">
+                        <div class="page-description-content flex-grow-1">
+                            <h1>Pengambilan Hari Ini</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if($pelanggans->count() == null)
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <p>Tidak ada pengambilan hari ini</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            @endif 
+            <script> let i = 1; </script>
+            @php
+                $i = 1;
+            @endphp
+            @foreach ($banjars as $banjar)
+                <h5>Banjar {{ $banjar->nama }}</h5>
+                @foreach ($pelanggans as $pelanggan)
+                    @if ($pelanggan->banjar_id == $banjar->id)
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card widget widget-popular-blog">
+                                    <div class="card-header">
+                                        <label for="inputEmail3" class="col-sm-2 col-form-label">{{ $pelanggan->nama }}</label>
+                                    </div>
+                                    <div class="card-body">
+                                        <form action="{{ route('pengambilan.store') }}" method="post" enctype="multipart/form-data" id="submit_{{ $i }}">
+                                            @csrf
+                                            <input type="hidden" class="form-control" id="id" name="id" value="{{ $pelanggan->id }}">
+                                            <div class="row mb-3">
+                                                <label for="alamat" class="col-sm-2 col-form-label">Alamat</label>
+                                                <div class="col-sm-10">
+                                                    <input type="email" class="form-control" id="alamat" placeholder="{{ $pelanggan->alamat }}" readonly>
+                                                </div>
+                                            </div>
+                                            <fieldset class="row mb-3">
+                                                <legend class="col-form-label col-sm-2 pt-0">Status</legend>
+                                                <div class="col-sm-10">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="status" id="status_{{ $i }}" value="1" checked>
+                                                        <label class="form-check-label" for="status">
+                                                            Ambil
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="radio" name="status" id="status2_{{ $i }}" value="2">
+                                                        <label class="form-check-label" for="status2">
+                                                            Tidak Ambil
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                
+                                            </fieldset>
+                                            <div class="row mb-3 alasan" style="display: none;" id="alasann_{{ $i }}">
+                                                <label for="alasan_{{ $i }}" class="col-sm-2 col-form-label">Alasan</label>
+                                                <div class="col-sm-10">
+                                                    <input type="text" class="form-control @error('alasan') is-invalid @enderror" id="alasan_{{ $i }}" name="alasan">
+                                                    @error('alasan')
+                                                    <span class="invalid-feedback" role="alert">
+                                                        <strong>{{ $message }}</strong>
+                                                    </span>
+                                                @enderror
+                                                </div>
+                                            </div> 
+                                            <div class="row mb-3">
+                                                <label for="gambar_{{ $i }}" class="col-sm-2 col-form-label">Foto</label>
+                                                <div class="col-sm-10">
+                                                    <input type="file" class="form-control @error('gambar') is-invalid @enderror" id="gambar_{{ $i }}" name="gambar" required>
+                                                    @error('gambar')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                            </div> 
+                                            <div class="row mb-3">
+                                                <label for="gambar" class="col-sm-2 col-form-label">Pembayaran Bulan Ini</label>
+                                                <div class="col-sm-10">
+                                                    <select id="status_bayar_{{ $i }}" class="form-select" name="status_bayar" @foreach ($lunas as $id) {{ $pelanggan->id == $id ? 'disabled' :'' }}@endforeach>
+                                                        <option value="0">Belum Lunas (Batas : {{ getTenggat($pelanggan->id)->format('d-m-Y') }})</option>
+                                                        <option value="1" @foreach ($lunas as $id) {{ $pelanggan->id == $id ? 'selected' :'' }}@endforeach>Sudah Lunas</option>
+                                                    </select>
+                                                    @error('bulan_bayar['.$pelanggan->id.']')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                            </div> 
+                                            <div class="row mb-3" id="bulan_{{ $i }}" style="display: none;">
+                                                <label for="bulan" class="col-sm-2 col-form-label">Pembayaran Bulan ke-</label>
+                                                <div class="col-sm-6">
+                                                    <div class="row">
+                                                        @foreach (getMonths($pelanggan->id) as $key => $month)
+                                                        @if ($loop->first || $loop->iteration == 7) <div class="col-sm-6"> @endif
+                                                        <div class="form-check">
+                                                            <input class="form-check-input @error('bulan_bayar') is-invalid @enderror" type="checkbox" value="{{ $key }}" id="{{ $key }}" name="bulan_bayar[]">
+                                                            <label class="form-check-label" for="{{ $month }}">
+                                                                {{ $month }}
+                                                            </label>
+                                                        </div>
+                                                        @if ($loop->last || $loop->iteration == 6) </div> @endif
+                                                        @endforeach
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3" id="total_bayar_{{ $i }}" style="display: none;">
+                                                <label for="total_bayar" class="col-sm-2 col-form-label">Total Bayar (Rp)</label>
+                                                <div class="col-sm-10">
+                                                    <input type="number" class="form-control @error('biaya['.$pelanggan->id.']') is-invalid @enderror" name="biaya">
+                                                    @error('biaya')
+                                                        <span class="invalid-feedback" role="alert">
+                                                            <strong>{{ $message }}</strong>
+                                                        </span>
+                                                    @enderror
+                                                </div>
+                                            </div>
+                                            <button type="button" class="btn btn-primary float-end" data-bs-toggle="modal" data-bs-target="#exampleModal_{{ $i }}">Simpan</button>
+                                            <div class="modal fade" id="exampleModal_{{ $i }}" tabindex="-1" aria-labelledby="exampleModalLabel_{{ $i }}" aria-hidden="true">
+                                                <div class="modal-dialog modal-dialog-centered">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="exampleModalLabel_{{ $i }}">Simpan Data Pengambilan</h5>
+                                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            Apakah Anda Yakin Ingin Menyimpan Data Ini?
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batalkan</button>
+                                                            <button type="submit" id="submit_{{ $i }}" class="btn btn-primary" data-bs-target="#submit_{{ $i }}">Simpan</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @php
+                            $i++;
+                        @endphp
+                         <script>i++;</script>
+                    @endif
+                @endforeach
+            @endforeach
+        </div>
+    </div>
+</div>
+
+<div class="table-responsive">
+            <table class="table table-bordered">
+                <thead>
+                    <tr class="align-middle">
+                        <th rowspan="3">No.</th>
+                        <th rowspan="3">Tanggal</th>
+                        <th rowspan="3">Keterangan</th>
+                        <th colspan="24" class="text-center">Pendapatan</th>
+                        <th rowspan="3">Total</th>
+                    </tr>
+                    <tr>
+                        @foreach (getMonthsYear() as $month)
+                            <th colspan="2" >{{ $month }}</th>
+                        @endforeach
+                    </tr>
+                    <tr>
+                        @foreach (getMonthsYear() as $month)
+                            <th>Cash</th>
+                            <th>Trf</th>
+                        @endforeach
+                    </tr>
+                </thead>
+                <tbody>
+                    {{-- @forelse ($pelanggans as $pelanggan)
+                        <tr>
+                            <td>{{  $loop->iteration  }}</td>
+                            <td>{{ Carbon\Carbon::parse($pelanggan->tanggal)->format('d-m-Y') }}</td>
+                            <td>{{  $pelanggan->keterangan }}</td>
+                            @if ($pelanggan->isTransfer == 0)
+                                <td>{{ number_format($pelanggan->biaya,0) }}</td>
+                                <td></td>
+                            @else
+                                <td></td>
+                                <td>{{ number_format($pelanggan->biaya,0) }}</td>
+                            @endif
+                            @foreach ($users as $key => $user)
+                                @if($user['pelanggan_id'] == $pelanggan->id)
+                                    @if ($user['pembayaran'] !== null)
+                                        @foreach ($user['pembayaran'] as $detail)
+                                            @if ($detail['isTransfer'] !== null)
+                                                @if ($detail['isTransfer'] == 0)
+                                                    <td>{{ number_format($detail['biaya'],0) }}</td>
+                                                    <td></td>
+                                                @else
+                                                    <td></td>
+                                                    <td>{{ number_format($detail['biaya'],0) }}</td>
+                                                @endif
+                                            @else
+                                                <td></td>
+                                                <td></td>
+                                            @endif
+                                        @endforeach   
+                                    @else
+                                        @for ($i = 0; $i < 24; $i++)
+                                            <td></td>
+                                        @endfor
+                                    @endif 
+                                    <td>{{ number_format($user['total'],0) }}</td>
+                                @endif
+                            @endforeach    
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="text-center">
+                                <p>Tidak ada data</p>
+                            </td>
+                        </tr>
+                    @endforelse --}}
+                </tbody>
+            </table>
+        </div>
+@if(session()->has('status'))
+    @include('layout.backend.alert')
+@endif
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    for (let j = 1; j <= i; j++) {
+        $(document).ready(function () {
+            $('#status_'+j).on('click', function () {
+                
+                    $('#alasann_'+j).hide();
+                
+            }); 
+            $('#status2_'+j).on('click', function () {
+                    $('#alasann_'+j).show();
+                
+            });
+
+            $('#status_bayar_'+j).on('change', function () {
+                if ($(this).val() == "1"){
+                    $('#bulan_'+j).show();
+                    $('#total_bayar_'+j).show();
+                }
+                else{
+                    $('#bulan_'+j).hide();
+                    $('#total_bayar_'+j).hide();
+                }
+            }); 
+        });
+    }
+    
+</script>
+
+@endsection
+
+
+
+let kategoris = $('.kategori');
+$.each(kategoris, function(index,kategori){
+    kategoris.eq(index).on('change', function(){
+        let tes = kategoris.eq(index).val();
+        $.get("{{ route('getKodeDistribusi') }}", function(distribusis){
+            $.each(distribusis, function(i,distribusi){
+                if(tes == distribusi.id){
+                    $('.biaya').eq(index).val(distribusi.jumlah);
+                    priceFormat();
+                }
+            });
+        });
+    });
+})
+
+// cari user
+$id = User::where('tenggat','<',Carbon::today())->pluck('id');
+
+//cek pembayaran
+
+$lunas = User::whereIn('id',$id)->whereHas('pembayaran', function($q){
+    $q->whereHas('detailPembayaran',function($p){
+        $p->whereMonth('bulan_bayar',Carbon::today()->subDays(30)->format('m'));
+    });
+})->get();
+
+foreach ($lunas as $user){
+    User::where('id',$user->id)->update(['tenggat' => getTenggatBayar($user->tenggat)])
+}

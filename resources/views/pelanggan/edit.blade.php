@@ -1,0 +1,169 @@
+@extends('layout.backend.core')
+
+@section('content')
+
+<div class="app-content">
+    <div class="content-wrapper">
+        <div class="container">
+            <div class="row">
+                <div class="col">
+                    <div class="page-description d-flex align-items-center">
+                        <div class="page-description-content flex-grow-1">
+                            <h1>Edit Pelanggan</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div class="card widget widget-popular-blog">
+                        <div class="card-body">
+                            <form method="POST" action="{{ route('pelanggan.update',$pelanggan->id) }}">
+                                @method('patch')
+                                @csrf
+                                <div class="auth-credentials">
+                                    <div class="row">
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="kategori" class="form-label">Kategori</label>
+                                            <select class="form-select m-b-md @error('kategori') is-invalid @enderror" id="kategori" name="kode_distribusi_id" required autofocus>
+                                                @foreach ($distribusis as $distribusi)
+                                                    <option value="{{ $distribusi->id }}" {{ ($pelanggan->kode_distribusi_id == $distribusi->id)? 'selected' : '' }}>{{ $distribusi->objek }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('kategori')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                    
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="nik" class="form-label">NIK</label>
+                                            <input type="text" class="form-control m-b-md @error('nik') is-invalid @enderror" name="nik" id="nik" aria-describedby="nik" oninput="getNIK(this.value)" value="{{ $pelanggan->nik}}" required autocomplete="nik">
+                                            @error('nik')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="nama" id="nama_label" class="form-label">Nama</label>
+                                            <input type="text" class="form-control m-b-md @error('nama') is-invalid @enderror" name="nama" id="nama" aria-describedby="nama" value="{{ $pelanggan->nama}}" required autocomplete="nama" >
+                                            @error('nama')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="username" id="username_label" class="form-label">Username</label>
+                                            <input type="text" class="form-control m-b-md @error('username') is-invalid @enderror" name="username" id="username" aria-describedby="username" value="{{ $pelanggan->username}}" required autocomplete="username" >
+                                            @error('username')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                   
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="alamat" class="form-label">Alamat</label>
+                                            <input type="text" class="form-control m-b-md @error('alamat') is-invalid @enderror" name="alamat" id="alamat" aria-describedby="alamat" value="{{ $pelanggan->alamat}}" required autocomplete="alamat" >
+                                            @error('alamat')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-12 col-sm-12" style="display: none" id="nama_usaha_label">
+                                            <label for="nama_usaha" class="form-label">Nama Usaha</label>
+                                            <input type="text" class="form-control m-b-md @error('nama_usaha') is-invalid @enderror" name="nama_usaha" id="nama_usaha" aria-describedby="nama_usaha" value="{{ $pelanggan->usaha}}">
+                                            @error('nama_usaha')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="banjar" class="form-label">Banjar</label>
+                                            <select class="form-select m-b-md @error('banjar') is-invalid @enderror" id="banjar" name="banjar_id" required>
+                                                <option value="">--Pilih Banjar--</option>
+                                                @foreach ($banjars as $banjar)
+                                                    <option value="{{ $banjar->sid }}" {{ ($pelanggan->banjar_id == $banjar->sid)? 'selected' : '' }}>{{ $banjar->nama_banjar }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('banjar')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="telp" class="form-label">No. WA</label>
+                                            <input type="text" class="form-control m-b-md @error('telp') is-invalid @enderror" name="telp" id="telp" aria-describedby="telp" value="{{ $pelanggan->telp}}" required autocomplete="telp" >
+                                            @error('telp')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="rekanan" class="form-label">Rekanan</label>
+                                            <select class="form-select m-b-md @error('rekanan') is-invalid @enderror" id="rekanan" name="rekanan_id" required autofocus>
+                                                @foreach ($rekanans as $rekanan)
+                                                    <option value="{{ $rekanan->id }}" {{ ($pelanggan->rekanan_id == $rekanan->id)? 'selected' : '' }}>{{ $rekanan->nama }}</option>
+                                                @endforeach
+                                            </select>
+                                            @error('rekanan')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        <div class="col-lg-12 col-sm-12">
+                                            <label for="biaya" class="form-label">Biaya</label>
+                                            <input type="text" class="form-control m-b-md @error('biaya') is-invalid @enderror" name="biaya" id="biaya" aria-describedby="biaya" value="{{ $pelanggan->biaya}}" required autocomplete="biaya" >
+                                            @error('biaya')
+                                                <span class="invalid-feedback" role="alert">
+                                                    <strong>{{ $message }}</strong>
+                                                </span>
+                                            @enderror
+                                        </div>
+                                        
+                                    </div>
+                                <div class="auth-submit mt-5">
+                                    <button type="submit" class="btn btn-primary ">
+                                        {{ __('Submit') }}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if(session()->has('status'))
+    @include('layout.backend.alert')
+@endif
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script>
+    $('#kategori').on('change', function(){
+        let tes = $('#kategori').val();
+        $.get("{{ route('getKodeDistribusi') }}", function(distribusis){
+            $.each(distribusis, function(i,distribusi){
+                if(tes == distribusi.id){
+                    if(distribusi.kategori == '1'){
+                        $('#nama_usaha_label').hide();
+                    }
+                    else{
+                        $('#nama_usaha_label').show();
+                    }
+                }
+            });
+        });
+    })
+</script>
+@endsection
