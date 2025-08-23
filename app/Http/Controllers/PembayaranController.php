@@ -21,12 +21,12 @@ class PembayaranController extends Controller
     {   
         $months = getMonthsYear();
         if(Auth::user()->level == false){
-            $pembayarans = DetailPembayaran::where('user_id',Auth::id())->orderBy('created_at','DESC')->get();
+            $pembayarans = DetailPembayaran::where('user_id',Auth::id())->orderBy('created_at','DESC')->limit(10)->get();
         }
         elseif(Auth::user()->level == 'petugas'){
-            $pembayarans = Pembayaran::where('pegawai_id',Auth::id())->orderBy('created_at','DESC')->get();
+            $pembayarans = Pembayaran::where('pegawai_id',Auth::id())->orderBy('created_at','DESC')->limit(10)->get();
         }else{
-            $pembayarans = User::where('verified',true)->where('rekanan_id',1)->get(['id','kode_pelanggan','nama','biaya']);
+            $pembayarans = User::where('verified',true)->where('rekanan_id',1)->limit(10)->get(['id','kode_pelanggan','nama','biaya']);
         }
         return view('pembayaran.index',compact(['pembayarans','months']));
     }

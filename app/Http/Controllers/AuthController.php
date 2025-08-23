@@ -15,7 +15,7 @@ class AuthController extends Controller
     public function getRegistrasi()
     {
         $token = env('TOKEN_API');
-        $url = 'https://desaungasan.badungkab.go.id/api/banjar?token='.$token;
+        $url = 'https://ungasan.silagas.id/api/banjar?token='.$token;
         $response = Http::get($url);
         $datas = $response->object();
         $banjars = $datas->data;
@@ -26,7 +26,7 @@ class AuthController extends Controller
 
     public function postRegistrasi(Request $request)
     {
-        $url = 'http://desaungasan.badungkab.go.id/api/penduduk/nik/'.$request->nik;
+        $url = 'https://ungasan.silagas.id/api/penduduk/nik/'.$request->nik;
         $response = Http::get($url);
         $datas = $response->object();
 
