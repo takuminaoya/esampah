@@ -11,7 +11,8 @@ $(document).ready(function () {
     });
 
     $('#datatable3').DataTable({
-        "scrollX": true
+        "scrollX": true,
+        "paging": true,
     });
 
     $('#datatable4 tfoot th').each( function () {

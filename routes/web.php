@@ -52,6 +52,8 @@ Route::middleware('guest')->group(function(){
     Route::post('/login-pegawai', [AuthController::class, 'postLoginPegawai'])->name('postLoginPegawai');
 });
 
+Route::post('/whatsapp/send', [VerifikasiController::class, 'sendNotification'])->name('whatsapp.send');
+
 Route::group(['middleware' =>['auth:user,pegawai']], function (){
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/single-chart-pelanggan', [DashboardController::class, 'getSingleChartPelanggan'])->name('getSingleChartPelanggan');
@@ -88,12 +90,18 @@ Route::group(['middleware' =>['auth:user,pegawai']], function (){
         Route::get('/sync',[VerifikasiController::class, 'sync'])->name('sync');
         Route::get('nonaktif', [VerifikasiController::class, 'getNonaktif'])->name('getNonaktif');
         Route::get('kadaluarsa', [VerifikasiController::class, 'getKadaluarsa'])->name('getKadaluarsa');
+        Route::get('get-fee/{distributionCodeId}', [VerifikasiController::class, 'getFee'])->name('getFee');
     });
 
     Route::group(['prefix' => 'jalur', 'as' => 'jalur.'], function () { 
         Route::get('/', [JalurController::class, 'index'])->name('index');
-        Route::post('/edit/{jalur}', [JalurController::class, 'update'])->name('update');
+        Route::put('/edit/{jalur}', [JalurController::class, 'update'])->name('update');
         Route::patch('/{jalur}', [JalurController::class, 'postUpdateStatus'])->name('postUpdateStatus');
+        Route::get('create', [JalurController::class, 'create'])->name('create');
+        Route::post('create', [JalurController::class, 'store'])->name('store');
+        Route::get('edit/{jalur}', [JalurController::class, 'edit'])->name('edit');
+        Route::patch('edit/{jalur}', [JalurController::class, 'update'])->name('update');
+        Route::delete('{jalur}', [JalurController::class, 'destroy'])->name('destroy');
     });
 
     Route::group(['prefix' => 'kode-distribusi', 'as' => 'kode-distribusi.'], function () { 

@@ -18,7 +18,7 @@ class PegawaiSeeder extends Seeder
         $pegawais = [
             [
                 'nama' => 'bendahara',
-                'email' => 'bendahara@gmail.com',
+                'username' => 'bendahara',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
@@ -28,7 +28,7 @@ class PegawaiSeeder extends Seeder
             ],
             [
                 'nama' => 'petugas',
-                'email' => 'petugas@gmail.com',
+                'username' => 'petugas',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
@@ -38,7 +38,7 @@ class PegawaiSeeder extends Seeder
             ],
             [
                 'nama' => 'Roni',
-                'email' => 'Roni@gmail.com',
+                'username' => 'Roni',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
@@ -48,7 +48,7 @@ class PegawaiSeeder extends Seeder
             ],
             [
                 'nama' => 'Harto',
-                'email' => 'Harto@gmail.com',
+                'username' => 'Harto',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
@@ -58,7 +58,7 @@ class PegawaiSeeder extends Seeder
             ],
             [
                 'nama' => 'Wijaya',
-                'email' => 'wijaya@gmail.com',
+                'username' => 'wijaya',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
@@ -68,7 +68,7 @@ class PegawaiSeeder extends Seeder
             ],
             [
                 'nama' => 'Tama',
-                'email' => 'tama@gmail.com',
+                'username' => 'tama',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
@@ -78,7 +78,7 @@ class PegawaiSeeder extends Seeder
             ],
             [
                 'nama' => 'Admin',
-                'email' => 'admin@gmail.com',
+                'username' => 'admin',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',

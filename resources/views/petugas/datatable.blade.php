@@ -1,4 +1,4 @@
-<table id="datatable1" class="display" style="width:100%">
+<table id="" class="table display" style="width:100%">
         <thead>
             <tr>
                 <th>No.</th>

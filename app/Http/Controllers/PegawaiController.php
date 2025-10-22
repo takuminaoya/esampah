@@ -28,7 +28,7 @@ class PegawaiController extends Controller
     public function create()
     {   
         $token = env('TOKEN_API');
-        $url = 'https://desaungasan.badungkab.go.id/api/banjar?token='.$token;
+        $url = 'https://ungasan.silagas.id/api/banjar?token='.$token;
         $response = Http::get($url);
         $datas = $response->object();
         $banjars = $datas->data;

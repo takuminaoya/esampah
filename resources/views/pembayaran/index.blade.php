@@ -1,7 +1,6 @@
 @extends('layout.backend.core')
 
 @section('content')
-
     <div class="app-content">
         <div class="content-wrapper">
             <div class="container">
@@ -49,19 +48,17 @@
                                         data-bs-toggle="dropdown" aria-expanded="false">
                                         <span class="visually-hidden">Toggle Dropdown</span>
                                     </button>
-                                    @isset ($rekanans)
-                                        <ul class="dropdown-menu">
-                                            @foreach ($rekanans as $rekanan)
-                                                <li><a class="dropdown-item"
-                                                        href="{{ route('pelanggan.index') }}?rekanan={{ $rekanan->id }}">{{ $rekanan->nama }}</a>
-                                                </li>
-                                            @endforeach
-                                        </ul>
-                                    @endif
+                                    <ul class="dropdown-menu">
+                                        @foreach ($rekanans as $rekanan)
+                                            <li><a class="dropdown-item"
+                                                    href="{{ route('pelanggan.index') }}?rekanan={{ $rekanan->id }}">{{ $rekanan->nama }}</a>
+                                            </li>
+                                        @endforeach
+                                    </ul>
                                 </div>
                             </div>
+                        @endif
                     </div>
-                    @endif
                 </div>
             </div>
             <div class="row">
@@ -77,5 +74,4 @@
         </div>
     </div>
     </div>
-
 @endsection

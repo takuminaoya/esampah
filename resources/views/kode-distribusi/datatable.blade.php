@@ -58,6 +58,8 @@
                 @endforeach
             </tbody>
         </table>
+
+        {{ $distribusis->links() }}
 @endif
                 
             

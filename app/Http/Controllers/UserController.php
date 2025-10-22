@@ -12,15 +12,22 @@ use App\Models\Pembayaran;
 use App\Models\Rekanan;
 use App\Models\StatusPelanggan;
 use App\Models\User;
+use App\Services\CustomerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
-use PhpOffice\PhpSpreadsheet\Calculation\DateTimeExcel\Month;
 
 class UserController extends Controller
 {
+    protected $customerService;
+
+    public function __construct(CustomerService $customerService)
+    {
+        $this->customerService = $customerService;
+    }
     /**
      * Display a listing of the resource.
      *
@@ -39,16 +46,16 @@ class UserController extends Controller
                             $r->where('nama', $req);
                         });
                     });
-                })->get();
+                })->paginate(25);
             }
             elseif ($request->rekanan){
                 $req = $request->rekanan;
                 $pelanggans = User::where('verified',true)->whereHas('rekanan', function($q) use($req){
                     $q->where('id',$req);
-                })->get();
+                })->paginate(25);
             }
             else{
-                $pelanggans = User::where('verified',true)->where('rekanan_id',1)->get();
+                $pelanggans = User::where('verified',true)->where('rekanan_id',1)->paginate(25);
             }
             return view('pelanggan.index',compact(['pelanggans','rekanans','months']));
         }
@@ -58,7 +65,7 @@ class UserController extends Controller
     {
         $distribusis = KodeDistribusi::all();
         $token = env('TOKEN_API');
-        $url = 'https://desaungasan.badungkab.go.id/api/banjar?token='.$token;
+        $url = 'https://ungasan.silagas.id/api/banjar?token='.$token;
         $response = Http::get($url);
         $datas = $response->object();
         $banjars = $datas->data;
@@ -67,14 +74,7 @@ class UserController extends Controller
     }
 
     public function store(Request $request){
-        $last_kode = User::where('verified',true)
-            ->where('rekanan_id',$request->rekanan)
-            ->latest()
-            ->value('kode_rekanan');
-    
-        $kode_rekanan = $last_kode+1;
-
-        $kode_pelanggan = getKodePelanggan($request->rekanan);
+        list($partnerCode, $customerCode) = $this->customerService->generateCustomerCode($request->rekanan);
         $tgl_verified = Carbon::today()->toDateString();
         $tenggat = getTenggatBayar($tgl_verified);
         
@@ -97,13 +97,13 @@ class UserController extends Controller
                 'telp'  => $request->telp,
                 'usaha' => $request->nama_usaha,
                 'banjar_id' => $request->banjar,
-                'kode_pelanggan' => $kode_pelanggan,
-                'kode_rekanan' => $kode_rekanan,
+                'kode_pelanggan' => $customerCode,
+                'kode_rekanan' => $partnerCode,
                 'biaya' => $request->biaya,
                 'rekanan_id' => $request->rekanan,
                 'verified' => true,
                 'tgl_verified' => $tgl_verified,
-                'username' => $kode_pelanggan,
+                'username' => $customerCode,
                 'password' => bcrypt('123'),
                 'tenggat_bayar' => $tenggat
             ]);
@@ -117,7 +117,7 @@ class UserController extends Controller
         $distribusis = KodeDistribusi::all();
 
         $token = env('TOKEN_API');
-        $url = 'https://desaungasan.badungkab.go.id/api/banjar?token='.$token;
+        $url = 'https://ungasan.silagas.id/api/banjar?token='.$token;
         $response = Http::get($url);
         $datas = $response->object();
         $banjars = $datas->data;
@@ -129,14 +129,7 @@ class UserController extends Controller
 
     public function update(Request $request, User $pelanggan)
     {
-        $last_kode = User::where('verified',true)
-            ->where('rekanan_id',$request->rekanan_id)
-            ->latest()
-            ->value('kode_rekanan');
-
-        $kode_rekanan = $last_kode+1;
-
-        $kode_pelanggan = getKodePelanggan($request->rekanan_id);
+        list($partnerCode, $customerCode) = $this->customerService->generateCustomerCode($request->rekanan);
     
         $edit = $request->validate([
             'nama' => 'required',
@@ -160,8 +153,8 @@ class UserController extends Controller
             'biaya' => $request->biaya,
             'kode_distribusi_id' => $request->kode_distribusi_id,
             'rekanan_id' => $request->rekanan_id,
-            'kode_pelanggan' => $kode_pelanggan,
-            'kode_rekanan' => $kode_rekanan
+            'kode_pelanggan' => $customerCode,
+            'kode_rekanan' => $partnerCode
         ]);
 
         return redirect('pelanggan')
@@ -171,24 +164,24 @@ class UserController extends Controller
 
     public function updateStatus(User $user)
     {
-        if($user->status == true){
-            User::where('id',$user->id)
-                ->update(['status' => false]);
-
-            StatusPelanggan::where('user_id',$user->id)
-                ->where('bulan',Carbon::today()->format('Y-m'))
-                ->update(['status' => false]);
-        }else{
-            User::where('id',$user->id)
-                ->update(['status' => true]);
-
-            StatusPelanggan::where('user_id',$user->id)
-                ->where('bulan',Carbon::today()->format('Y-m'))
-                ->update(['status' => true]);
+        try {
+            $result = $user->status 
+                ? $this->customerService->deactivateCustomer($user)
+                : $this->customerService->activateCustomer($user);
+            
+            return redirect()->back()
+                ->with('status', $result['status'])
+                ->with('message', $result['message']);
+        } catch (\Exception $e) {
+            Log::error('Error updating customer status: ' . $e->getMessage(), [
+                'trace' => $e->getTrace(),
+                'user_id' => $user->id
+            ]);
+            
+            return redirect()->back()
+                ->with('status', 'error')
+                ->with('message', 'Gagal mengubah status pelanggan');
         }
-        return redirect()->back()
-            ->with('status','success')
-            ->with('message','Status pelanggan berhasil diupdate');
     }
 
     public function destroy(User $user){

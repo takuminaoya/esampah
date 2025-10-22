@@ -18,12 +18,14 @@ class UserSeeder extends Seeder
         $users = [
             [
                 'nama' => 'pelanggan',
-                'email' => 'pelanggan@gmail.com',
+                'username' => 'pelanggan',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'089678678678',
                 'banjar_id'=>'1',
                 'nik' => '517836527358',
+                'kode_pelanggan' => 'cub0000',
+                'kode_rekanan' => 0,
                 'kode_distribusi_id'=> '1',
                 'biaya' => '30000',
                 'verified'=>true,
@@ -33,7 +35,7 @@ class UserSeeder extends Seeder
             ],
             [
                 'nama' => 'Wahyu',
-                'email' => 'wahyu@gmail.com',
+                'username' => 'wahyu',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'08967867808',
@@ -45,7 +47,7 @@ class UserSeeder extends Seeder
 
             [
                 'nama' => 'Dode',
-                'email' => 'dode@gmail.com',
+                'username' => 'dode',
                 'password'=> bcrypt('123'),
                 'alamat'=> 'Jalan Imam Bojol No.1',
                 'telp'=>'08967867808',

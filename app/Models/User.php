@@ -19,7 +19,9 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'nama',
-        'email',
+        'username',
+        'kode_pelanggan',
+        'kode_rekanan',
         'password',
         'nik',
         'alamat',
@@ -54,6 +56,10 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    function getOrderNoAttribute() {
+        return str_pad($this->kode_rekanan,4,'0',STR_PAD_LEFT);
+    }
+
     public function pengambilan(){
         return $this->hasMany(Pengambilan::class, 'user_id');
     }
@@ -70,12 +76,16 @@ class User extends Authenticatable
         return $this->belongsTo(Banjar::class, 'banjar_id');
     }
 
-    public function kodeDistribusi(){
+    public function distributionCode(){
         return $this->belongsTo(KodeDistribusi::class, 'kode_distribusi_id');
     }
 
     public function rekanan(){
         return $this->belongsTo(Rekanan::class, 'rekanan_id');
+    }
+
+    public function detailPembayaran(){
+        return $this->hasMany(DetailPembayaran::class, 'pembayaran_id');
     }
 
 }

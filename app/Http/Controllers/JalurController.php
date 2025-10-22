@@ -36,7 +36,8 @@ class JalurController extends Controller
 
     public function create()
     {
-        //
+        $banjars = Banjar::all();
+        return view('jalur.create', compact('banjars'));
     }
 
     /**
@@ -47,7 +48,29 @@ class JalurController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'nama' => 'required|string|max:255',
+            'banjar_ids' => 'required|array',
+            'banjar_ids.*' => 'exists:banjars,id'
+        ]);
+
+        // Create new jalur
+        $jalur = Jalur::create([
+            'nama' => $request->nama,
+            'status' => true
+        ]);
+
+        // Create detail jalur with the correct order
+        foreach($request->banjar_ids as $banjar_id) {
+            DetailJalur::create([
+                'jalur_id' => $jalur->id,
+                'banjar_id' => $banjar_id
+            ]);
+        }
+
+        return redirect('jalur')
+            ->with('status', 'success')
+            ->with('message', 'Jalur berhasil ditambahkan');
     }
 
     /**
@@ -69,7 +92,9 @@ class JalurController extends Controller
      */
     public function edit(Jalur $jalur)
     {
-        //
+        $details = DetailJalur::where('jalur_id', $jalur->id)->orderBy('id', 'asc')->get();
+        $banjars = Banjar::all();
+        return view('jalur.edit', compact(['jalur', 'details', 'banjars']));
     }
 
     /**
@@ -82,25 +107,29 @@ class JalurController extends Controller
     public function update(Request $request, Jalur $jalur)
     {
         $request->validate([
-            'banjars' => 'required'
+            'nama' => 'required|string|max:255',
+            'banjar_ids' => 'required|array'
         ]);
-        $jalurs_old = DetailJalur::where('jalur_id',$jalur->id)->get();
 
-        foreach($jalurs_old as $jalur_old){
-            DetailJalur::where('jalur_id',$jalur_old->id)->delete();
-        }
+        // Update jalur name
+        $jalur->update([
+            'nama' => $request->nama
+        ]);
 
-        foreach($request->banjars as $banjar){
-             DetailJalur::create([
+        // Delete all existing detail jalur
+        $jalur->detailJalur()->delete();
+
+        // Create new detail jalur with the correct order
+        foreach($request->banjar_ids as $index => $banjar_id) {
+            DetailJalur::create([
                 'jalur_id' => $jalur->id,
-                'banjar_id' => $banjar
-             ]);
+                'banjar_id' => $banjar_id
+            ]);
         }
 
         return redirect('jalur')
-            ->with('status','success')
-            ->with('message','Jalur berhasil diubah');
-       
+            ->with('status', 'success')
+            ->with('message', 'Jalur berhasil diubah');
     }
 
     /**
@@ -111,6 +140,20 @@ class JalurController extends Controller
      */
     public function destroy(Jalur $jalur)
     {
-        //
+        try {
+            // Delete all detail jalur records first
+            $jalur->detailJalur()->delete();
+            
+            // Delete the jalur
+            $jalur->delete();
+            
+            return redirect('jalur')
+                ->with('status', 'success')
+                ->with('message', 'Jalur berhasil dihapus');
+        } catch (\Exception $e) {
+            return redirect('jalur')
+                ->with('status', 'error')
+                ->with('message', 'Gagal menghapus jalur: ' . $e->getMessage());
+        }
     }
 }

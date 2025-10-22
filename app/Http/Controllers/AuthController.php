@@ -26,7 +26,7 @@ class AuthController extends Controller
 
     public function postRegistrasi(Request $request)
     {
-        $url = 'https://ungasan.silagas.id/api/penduduk/nik/'.$request->nik;
+        $url = 'http://ungasan.silagas.id/api/penduduk/nik/'.$request->nik;
         $response = Http::get($url);
         $datas = $response->object();
 

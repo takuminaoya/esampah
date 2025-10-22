@@ -7,6 +7,8 @@
 <link href="{{ asset('plugins/pace/pace.css') }}" rel="stylesheet">
 <link href="{{ asset('plugins/datatables/datatables.min.css') }}" rel="stylesheet">
 <link href="{{ asset('plugins/apexcharts/apexcharts.css') }}" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/7.33.1/sweetalert2.css" rel="stylesheet" type="text/css">
 
 
 <!-- Theme Styles -->

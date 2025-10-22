@@ -2,17 +2,18 @@
 
 namespace App\Http\Controllers;
 
-use App\Exports\PembayaransExport;
-use App\Models\Banjar;
-use App\Models\DetailJalur;
-use App\Models\DetailPembayaran;
-use App\Models\Pembayaran;
+use Carbon\Carbon;
 use App\Models\User;
 use App\Models\Jalur;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+use App\Models\Banjar;
+use App\Models\Rekanan;
+use App\Models\Pembayaran;
+use App\Models\DetailJalur;
 use Illuminate\Support\Arr;
+use Illuminate\Http\Request;
+use App\Models\DetailPembayaran;
+use App\Exports\PembayaransExport;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 
 class PembayaranController extends Controller
@@ -21,14 +22,17 @@ class PembayaranController extends Controller
     {   
         $months = getMonthsYear();
         if(Auth::user()->level == false){
-            $pembayarans = DetailPembayaran::where('user_id',Auth::id())->orderBy('created_at','DESC')->limit(10)->get();
+            $pembayarans = DetailPembayaran::where('user_id',Auth::id())->orderBy('created_at','DESC')->paginate(25);
         }
         elseif(Auth::user()->level == 'petugas'){
-            $pembayarans = Pembayaran::where('pegawai_id',Auth::id())->orderBy('created_at','DESC')->limit(10)->get();
+            $pembayarans = Pembayaran::where('pegawai_id',Auth::id())->orderBy('created_at','DESC')->paginate(25);
         }else{
-            $pembayarans = User::where('verified',true)->where('rekanan_id',1)->limit(10)->get(['id','kode_pelanggan','nama','biaya']);
+            $pembayarans = User::select(['id','kode_pelanggan','nama','biaya'])->where('verified',true)->where('rekanan_id',1)->paginate(25);
         }
-        return view('pembayaran.index',compact(['pembayarans','months']));
+
+        $rekanans = Rekanan::all();
+
+        return view('pembayaran.index',compact(['pembayarans','months', 'rekanans']));
     }
 
     public function getJadwal(){

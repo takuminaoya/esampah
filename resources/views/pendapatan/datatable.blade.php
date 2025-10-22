@@ -1,5 +1,5 @@
 @if (auth()->user()->level == 'bendahara')
-    <table id="datatable1" class="display" style="width:100%">
+    <table id="" class="display table" style="width:100%">
         <thead>
             <tr class="align-middle">
                 <th>No.</th>

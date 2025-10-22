@@ -183,40 +183,50 @@
     function getNIK(nik){
         $.ajax({
             type: "GET",
-            url: "https://desaungasan.badungkab.go.id/api/penduduk/" + nik,
+            url: "https://ungasan.silagas.id/api/penduduk/nik/" + nik,
             data: {
                 "token" : "{{ env('TOKEN_API') }}"
             },
             success: function(response){
-                if(response['tipe'] == 'p'){
+                if(response['data'] != null){
                     $('#nama').val(response['data']['nama_lengkap']);
                     $('#alamat').val(response['data']['alamat']);
                     let banjars = $('#banjar').find('option');
                     $.each(banjars, function(i, banjar){
-                        if(banjars.eq(i).text() == response['data']['dusun']){
+                       if(banjars.eq(i).text() == response['data']['dusun']){
                             banjars.eq(i).prop('selected',true);
                         } 
                     });
                 }
-                else if(response['tipe'] == 'np'){
-                    $('#nama').val(response['data']['nama_lengkap']);
-                    $('#alamat').val(response['data']['il_alamat']);
-                    let banjars = $('#banjar').find('option');
-                    $.each(banjars, function(i, banjar){
-                        if(banjars.eq(i).text() == response['data']['il_dusun']){
-                            banjars.eq(i).prop('selected',true);
-                        } 
+                else{
+                    $.ajax({
+                        type: "GET",
+                        url: "https://ungasan.silagas.id/api/penduduk/np/" + nik "?" ,
+                        data: {
+                            "token" : "{{ env('TOKEN_API') }}"
+                        },
+
+                        success: function(response){
+                            if(response['data'] != null){
+                                $('#nama').val(response['data']['nama_lengkap']);
+                                $('#alamat').val(response['data']['alamat']);
+                                let banjars = $('#banjar').find('option');
+                                $.each(banjars, function(i, banjar){
+                                if(banjars.eq(i).text() == response['data']['dusun']){
+                                        banjars.eq(i).prop('selected',true);
+                                    } 
+                                });
+                            }else{
+                                $('#nama').val("");
+                                $('#alamat').val("");
+                                $('#banjar').val("");
+                            }
+                        }    
                     });
-                }else{
-                    $('#nama').val("");
-                    $('#alamat').val("");
-                    $('#banjar').val("");
                 }
             }
         });
     }
-
-
 </script>
 
 @if(session()->has('status'))

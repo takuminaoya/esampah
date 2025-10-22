@@ -12,10 +12,15 @@ class DetailPembayaran extends Model
     protected $fillable = [
         'pembayaran_id',
         'bulan_bayar',
-        'biaya'
+        'biaya',
+        'user_id'
     ];
 
     public function pembayaran(){
         return $this->belongsTo(Pembayaran::class, 'pembayaran_id');
+    }
+
+    public function user(){
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

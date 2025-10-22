@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('pengambilans', function (Blueprint $table) {
             $table->id();
             $table->tinyInteger('status')->default(0);
-            $table->string('gambar');
+            $table->string('gambar')->nullable();
             $table->unsignedBigInteger('pegawai_id');
             $table->unsignedBigInteger('user_id');
             $table->text('alasan')->nullable();

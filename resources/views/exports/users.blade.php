@@ -1,4 +1,4 @@
-<table id="datatable1" class="display">
+<table id="" class="table">
     <thead>
         <tr>
             <th>ID</th>
@@ -22,7 +22,7 @@
             <td>{{  ($user->banjar)? $user->banjar->nama : '' }}</td>
             <td>{{ $user->telp }}</td>
             <td>: {{ $user->alamat }}</td>
-            <td>: {{ $user->kodeDistribusi->kode }}</td>
+            <td>: {{ $user->distributionCode->kode }}</td>
             <td>{{  getJalur($user->id)  }}</td>
             <td>{{ Carbon\Carbon::parse($user->tgl_verified)->format('d-m-Y') }}</td>
             <td>{{ $user->status }}</td>

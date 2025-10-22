@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('pegawais', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('email')->unique();
+            $table->string('username')->unique();
             $table->string('telp');
             $table->string('alamat');
             $table->unsignedBigInteger('banjar_id');

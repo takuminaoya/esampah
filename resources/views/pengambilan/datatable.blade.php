@@ -1,5 +1,5 @@
 @if (auth()->user()->level == false)
-    <table id="datatable1" class="display" style="width:100%">
+    <table id="" class="display table" style="width:100%">
         <thead>
             <tr>
                 <th>No.</th>
@@ -39,7 +39,7 @@
     </table>
 
 @elseif (auth()->user()->level == 'petugas')
-    <table id="datatable1" class="display" style="width:100%">
+    <table id="" class="table display" style="width:100%">
         <thead>
             <tr>
                 <th>No.</th>

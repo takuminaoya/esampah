@@ -20,7 +20,7 @@
                     </div>
                     <div class="card-body">
                     <div class="table-responsive">
-                        <table id="datatable1" class="display">
+                        <table id="" class="table display">
                             <thead>
                                 <tr>
                                     <th>ID</th>

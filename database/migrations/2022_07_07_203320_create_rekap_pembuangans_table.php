@@ -13,15 +13,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('detail_pembayarans', function (Blueprint $table) {
+        Schema::create('rekap_pembuangans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('pembayaran_id');
-            $table->string('bulan_bayar');
-            $table->integer('biaya');
+            $table->date('tanggal');
+            $table->unsignedBigInteger('kendaraan_id');
+            $table->double('jumlah');
             $table->timestamps();
-
-            $table->foreign('pembayaran_id')->references('id')->on('pembayarans')->onDelete('cascade')->onUpdate('cascade');
         });
     }
 
@@ -32,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('detail_pembayarans');
+        Schema::dropIfExists('rekap_pembuangans');
     }
 };

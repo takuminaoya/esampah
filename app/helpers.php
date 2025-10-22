@@ -122,9 +122,10 @@ function getPendapatan($bulan, $isTransfer = null){
 }
 
 function getDetailPembayaran($user_id){
-    $details = DetailPembayaran::whereHas('pembayaran',function($q) use($user_id){
-        $q->where('user_id',$user_id);
-    })->selectRaw('monthname(bulan_bayar) as bulan, biaya')->pluck('biaya','bulan')->toArray();
+    $details = DetailPembayaran::where('user_id',$user_id)
+        ->selectRaw('monthname(bulan_bayar) as bulan, biaya')
+        ->pluck('biaya','bulan')
+        ->toArray();
 
     foreach (getMonthsYear() as $month){
         
@@ -132,15 +133,8 @@ function getDetailPembayaran($user_id){
             $details[Carbon::parse($month)->format('F')] = 0;
         }
     }
-    $total = DetailPembayaran::whereHas('pembayaran',function($q) use($user_id){
-        $q->where('user_id',$user_id);
-    })->selectRaw('sum(biaya) as total, biaya')->value('total');
-
-    $details['total'] = $total;
-    // dd($details);
     return $details;
 }
-
 
 
         

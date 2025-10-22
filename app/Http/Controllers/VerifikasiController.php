@@ -10,57 +10,51 @@ use App\Models\Pendapatan;
 use App\Models\Rekanan;
 use App\Models\StatusPelanggan;
 use App\Models\User;
+use App\Http\Requests\CustomerVerificationRequest;
+use App\Services\CustomerService;
+use App\Services\DistributionCodeService;
+use App\Services\VerificationService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class VerifikasiController extends Controller
 {
-    public function getVerifikasiPelanggan(){
-        $pelanggans = User::where('verified',0)->get();
-        $distribusis = KodeDistribusi::all();
-        $rekanans = Rekanan::all();
-        return view('verifikasi.verify-pelanggan',compact(['pelanggans','distribusis','rekanans']));
+    protected $verificationService;
+
+    public function __construct(VerificationService $verificationService)
+    {
+        $this->verificationService = $verificationService;
     }
 
-    public function postVerifikasiPelanggan(Request $request, User $user)
+    public function getVerifikasiPelanggan(){
+        $customerService = new CustomerService();
+        $customers = $customerService->getUnverifiedCustomers();
+
+        $distributionCodeService = new DistributionCodeService();
+        $distributionCodes = $distributionCodeService->getDistributionCodes();
+
+        $partners = Rekanan::all();
+        return view('verifikasi.verify-pelanggan',compact(['customers','distributionCodes','partners']));
+    }
+
+    public function postVerifikasiPelanggan(CustomerVerificationRequest $request, User $user)
     {
-        $jumlah = str_replace(',', '', $request->biaya);
-
-        $last_kode = User::where('verified',true)
-            ->where('rekanan_id',$request->rekanan)
-            ->latest()
-            ->value('kode_rekanan');
-
-        $kode_rekanan = $last_kode+1;
-
-        $kode_pelanggan = getKodePelanggan($request->rekanan);
-
-        $tgl_verified = Carbon::today()->toDateString();
-        $tenggat = getTenggatBayar($tgl_verified);
-
-        $request->validate([
-            'biaya' => 'required'
-        ]);
-
-        User::where('id',$user->id)->update([
-            'verified'=>1,
-            'rekanan_id' => $request->rekanan,
-            'tgl_verified' => $tgl_verified,
-            'biaya' => $jumlah,
-            'tenggat_bayar' => $tenggat,
-            'kode_rekanan' => $kode_rekanan,
-            'kode_pelanggan' => $kode_pelanggan
-        ]);
-
-        StatusPelanggan::create([
-            'user_id' => $user->id,
-            'bulan' => Carbon::today()->format('Y-m'),
-            'status' => true
-        ]);
+        try {
+            $validatedData = $request->validated();
+            
+            $result = $this->verificationService->verifyCustomer($validatedData, $user);
         
-        return redirect()->back()
-                ->with('status','success')
-                ->with('message','Akun telah diverifikasi');
+            return redirect()->back()
+                ->with('status', $result['status'])
+                ->with('message', $result['message']);
+        } catch (\Exception $th) {
+            Log::error($th->getMessage(), ['trace' => $th->getTrace()]);
+            return redirect()->back()
+                ->with('status', 'error')
+                ->with('message', 'Terjadi kesalahan saat memverifikasi pelanggan');
+        }
     }
 
     public function getVerifikasiTransfer(){
@@ -261,5 +255,71 @@ class VerifikasiController extends Controller
         return redirect()->back()
             ->with('status','success')
             ->with('message',$update_tenggat.' user berhasil diupdate');
+    }
+
+    public function sendNotification(Request $request)
+    {
+        // Log the request data for debugging
+        Log::info('WhatsApp notification request:', $request->all());
+        
+        $request->validate([
+            'phone' => 'required',
+            'message' => 'required'
+        ]);
+
+        // Format phone number if needed
+        $phone = $request->input('phone');
+        
+        Log::info('Original phone number:', ['phone' => $phone]);
+        
+        // Remove any non-numeric characters
+        $phone = preg_replace('/[^0-9]/', '', $phone);
+        
+        Log::info('After removing non-numeric characters:', ['phone' => $phone]);
+        
+        // Ensure it starts with country code
+        if (substr($phone, 0, 2) !== '62') {
+            if (substr($phone, 0, 1) === '0') {
+                $phone = '62' . substr($phone, 1);
+            } else {
+                $phone = '62' . $phone;
+            }
+        }
+        
+        Log::info('Final formatted phone number:', ['phone' => $phone]);
+
+        try {
+            $response = Http::asMultipart()
+                ->post('https://whapify.id/api/send/whatsapp', [
+                    'secret' => env('WHAPIFY_API_KEY'),
+                    'account' => env('WHAPIFY_ACCOUNT_ID', '175655669335f4a8d465e6e1edc05f3d8ab658c55168b2ed9584827'),
+                    'recipient' => $phone,
+                    'type' => 'text',
+                    'message' => $request->message
+                ]);
+
+            if ($response->successful()) {
+                Log::info('WhatsApp notification sent successfully');
+                return response()->json([
+                    'status' => 'success',
+                    'message' => 'WhatsApp notification sent successfully'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => 'error',
+                    'message' => 'Failed to send WhatsApp notification: ' . $response->body()
+                ], 500);
+            }
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Failed to send WhatsApp notification: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function getFee($distributionCodeId){
+        $distributionCodeService = new DistributionCodeService();
+        return $distributionCodeService->getFee($distributionCodeId);
     }
 }

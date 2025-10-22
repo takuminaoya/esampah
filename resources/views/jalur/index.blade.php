@@ -11,6 +11,9 @@
                         <div class="page-description-content flex-grow-1">
                             <h1>Jalur Petugas</h1>
                         </div>
+                        <div class="page-description-actions">
+                            <a href="{{ route('jalur.create') }}" class="btn btn-warning btn-style-light"><i class="material-icons">add</i>Tambah Data</a>
+                        </div>
                     </div>
                 </div>
             </div>

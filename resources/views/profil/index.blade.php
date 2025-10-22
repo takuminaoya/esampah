@@ -48,7 +48,7 @@
                                 @if (auth()->user()->level == 'false')
                                     <tr>
                                         <td>Kategori</td>
-                                        <td>: {{ $user->kodeDistribusi->objek }}</td>
+                                        <td>: {{ $user->distributionCode->objek }}</td>
                                     </tr>
                                     <tr>
                                         <td>Nama Usaha</td>

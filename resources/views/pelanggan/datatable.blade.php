@@ -1,6 +1,6 @@
 @if (auth()->user()->level == 'admin' || auth()->user()->level == 'bendahara')
 <div class="table-responsive">
-    <table id="datatable1" class="display">
+    <table id="" class="table">
         <thead>
             <tr>
                 <th>ID</th>
@@ -113,7 +113,7 @@
                                             </tr>
                                             <tr>
                                                 <td>Kategori</td>
-                                                <td>: {{ ($pelanggan->kodeDistribusi)? $pelanggan->kodeDistribusi->objek : '' }}</td>
+                                                <td>: {{ ($pelanggan->distributionCode)? $pelanggan->distributionCode->objek : '' }}</td>
                                             </tr>
                                             <tr>
                                                 <td>Nama Usaha</td>
@@ -166,5 +166,7 @@
             @endforelse
         </tbody>
     </table>
+
+    {{ $pelanggans->links() }}
 </div>
 @endif

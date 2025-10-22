@@ -79,7 +79,7 @@
                                             <select class="form-select m-b-md @error('banjar') is-invalid @enderror" id="banjar" name="banjar" required>
                                                 <option value="">--Pilih Banjar--</option>
                                                 @foreach ($banjars as $banjar)
-                                                    <option value="{{ $banjar->sid }}">{{ $banjar->nama_banjar }}</option>
+                                                    <option value="{{ $banjar->id }}">{{ $banjar->nama }}</option>
                                                 @endforeach
                                             </select>
                                             @error('banjar')
@@ -154,42 +154,6 @@
                 }
             });
         });
-    });
-    
-    function getNIK(nik){
-        $.ajax({
-            type: "GET",
-            url: "https://desaungasan.badungkab.go.id/api/penduduk/" + nik,
-            data: {
-                "token" : "{{ env('TOKEN_API') }}"
-            },
-            success: function(response){
-                if(response['tipe'] == 'p'){
-                    $('#nama').val(response['data']['nama_lengkap']);
-                    $('#alamat').val(response['data']['alamat']);
-                    let banjars = $('#banjar').find('option');
-                    $.each(banjars, function(i, banjar){
-                        if(banjars.eq(i).text() == response['data']['dusun']){
-                            banjars.eq(i).prop('selected',true);
-                        } 
-                    });
-                }
-                else if(response['tipe'] == 'np'){
-                    $('#nama').val(response['data']['nama_lengkap']);
-                    $('#alamat').val(response['data']['il_alamat']);
-                    let banjars = $('#banjar').find('option');
-                    $.each(banjars, function(i, banjar){
-                        if(banjars.eq(i).text() == response['data']['il_dusun']){
-                            banjars.eq(i).prop('selected',true);
-                        } 
-                    });
-                }else{
-                    $('#nama').val("");
-                    $('#alamat').val("");
-                    $('#banjar').val("");
-                }
-            }
-        });
-    }
+    })
 </script>
 @endsection

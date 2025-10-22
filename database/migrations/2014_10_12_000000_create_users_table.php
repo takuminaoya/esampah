@@ -16,17 +16,19 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->string('email')->unique();
-            $table->string('telp');
-            $table->string('alamat');
-            $table->unsignedBigInteger('banjar_id');
-            $table->string('nik')->unique();
+            $table->integer('kode_rekanan');
+            $table->string('kode_pelanggan')->nullable();
+            $table->string('username')->nullable();
+            $table->string('telp')->nullable();
+            $table->string('alamat')->nullable();
+            $table->unsignedBigInteger('banjar_id')->nullable();
+            $table->string('nik')->nullable();
             $table->string('usaha')->nullable();
-            $table->string('password');
+            $table->string('password')->nullable();
             $table->boolean('verified')->default(false);
             $table->dateTime('tgl_verified')->nullable();
             $table->date('tenggat_bayar')->nullable();
-            $table->unsignedBigInteger('kode_distribusi_id');
+            $table->unsignedBigInteger('kode_distribusi_id')->nullable();
             $table->integer('biaya')->nullable();
             $table->unsignedBigInteger('rekanan_id')->nullable();
             $table->boolean('status')->default(true);

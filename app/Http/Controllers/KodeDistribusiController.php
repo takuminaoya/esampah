@@ -15,7 +15,7 @@ class KodeDistribusiController extends Controller
     
     public function index()
     {
-        $distribusis = KodeDistribusi::all();
+        $distribusis = KodeDistribusi::paginate(25);
         return view('kode-distribusi.index',compact('distribusis'));
     }
 

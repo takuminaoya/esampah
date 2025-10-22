@@ -1,6 +1,6 @@
 
     @if (auth()->user()->level == 'petugas')
-        <table id="datatable1" class="display" style="width:100%">
+        <table id="" class="table display" style="width:100%">
             <thead>
                 <tr>
                     <th scope="col">No</th>
@@ -23,7 +23,7 @@
             </tbody>
         </table>
     @elseif (auth()->user()->level == 'bendahara')
-        <table id="datatable1" class="display" style="width:100%">
+        <table id="" class="table display" style="width:100%">
             <thead>
                 <tr>
                     <th scope="col">No</th>

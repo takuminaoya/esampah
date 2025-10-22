@@ -6,7 +6,7 @@
                     <th>Jalur</th>
                     <th>Banjar</th>
                     <th>Status</th>
-                    {{-- <th>Aksi</th> --}}
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -59,47 +59,40 @@
                             </div>
                         </div>
                     </td>
-                    {{-- <td>
-                        <button type="button" class="btn btn-info btn-style-light" data-bs-toggle="modal" data-bs-target="#edit_{{$jalur->id}}">
-                            Edit
+                    <td class="text-center">
+                        <a href="{{ route('jalur.edit', $jalur->id) }}" class="btn btn-info btn-style-light">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button type="button" class="btn btn-danger btn-style-light" data-bs-toggle="modal" data-bs-target="#delete{{$jalur->id}}">
+                            <i class="fas fa-trash"></i> Hapus
                         </button>
-                            <div class="modal fade" id="edit_{{$jalur->id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog modal-dialog-centered">
-                                    <div class="modal-content">
-                                    <!-- Modal Header -->
-                                        <div class="modal-header">
-                                            <h4 class="modal-title">Edit Jalur</h4>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <!-- Modal body -->
-                                        <div class="modal-body">
-                                            <form action="{{ route('jalur.update',$jalur->id) }}" method="POST">
-                                                @csrf
-                                        
-                                                @foreach ($banjars as $banjar)
-                                                    <div class="form-check">
-                                                        <input class="form-check-input" name="banjars[]" type="checkbox" value="{{ $banjar->id }}" id="{{ $banjar->id }}" 
-                                                        @foreach ($details as $detail)
-                                                        @if($detail->jalur_id == $jalur->id && $detail->banjar_id == $banjar->id)
-                                                            checked
-                                                        @endif
-                                                       
-                                                        @endforeach >
-                                                        <label class="form-check-label" for="{{ $banjar->id }}">
-                                                            {{ $banjar->nama }}
-                                                        </label>
-                                                    </div>
-                                                @endforeach
-                                                    <div class="d-flex justify-content-between">
-                                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Batal</button>
-                                                        <button type="submit" class="btn btn-primary" >Ya </button>
-                                                    </div>
-                                            </form>
-                                        </div>
+                        
+                        <!-- Delete Modal -->
+                        <div class="modal fade" id="delete{{$jalur->id}}" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Hapus Jalur</h4>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <form action="{{ route('jalur.destroy', $jalur->id) }}" method="POST">
+                                            @csrf
+                                            @method('DELETE')
+                                            <div class="form-group"> 
+                                                <p>Apakah Anda yakin ingin menghapus jalur <strong>{{ $jalur->nama }}</strong>?</p>
+                                                <p class="text-danger">Perhatian: Semua data terkait jalur ini juga akan dihapus.</p>
+                                            </div>
+                                            <div class="d-flex justify-content-between">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                                                <button type="submit" class="btn btn-danger">Hapus</button>
+                                            </div>
+                                        </form>
                                     </div>
                                 </div>
                             </div>
-                    </td> --}}
+                        </div>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>
