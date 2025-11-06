@@ -16,6 +16,7 @@ use App\Services\CustomerService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
@@ -46,16 +47,16 @@ class UserController extends Controller
                             $r->where('nama', $req);
                         });
                     });
-                })->paginate(25);
+                })->paginate(25)->withQueryString();
             }
             elseif ($request->rekanan){
                 $req = $request->rekanan;
                 $pelanggans = User::where('verified',true)->whereHas('rekanan', function($q) use($req){
                     $q->where('id',$req);
-                })->paginate(25);
+                })->paginate(25)->withQueryString();
             }
             else{
-                $pelanggans = User::where('verified',true)->where('rekanan_id',1)->paginate(25);
+                $pelanggans = User::where('verified',true)->where('rekanan_id',1)->paginate(25)->withQueryString();
             }
             return view('pelanggan.index',compact(['pelanggans','rekanans','months']));
         }
@@ -64,11 +65,7 @@ class UserController extends Controller
     public function create()
     {
         $distribusis = KodeDistribusi::all();
-        $token = env('TOKEN_API');
-        $url = 'https://ungasan.silagas.id/api/banjar?token='.$token;
-        $response = Http::get($url);
-        $datas = $response->object();
-        $banjars = $datas->data;
+        $banjars = DB::connection('ungasan')->table('banjars')->get();
         $rekanans = Rekanan::all();
         return view('pelanggan.create',compact(['distribusis','banjars','rekanans']));
     }

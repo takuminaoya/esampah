@@ -11,6 +11,7 @@ use App\Models\Rekanan;
 use App\Models\StatusPelanggan;
 use App\Models\User;
 use App\Http\Requests\CustomerVerificationRequest;
+use App\Modules\Whapify;
 use App\Services\CustomerService;
 use App\Services\DistributionCodeService;
 use App\Services\VerificationService;
@@ -45,6 +46,10 @@ class VerifikasiController extends Controller
             $validatedData = $request->validated();
             
             $result = $this->verificationService->verifyCustomer($validatedData, $user);
+
+            // oka . send wa
+            $wa = new Whapify();
+            $wa->sendSingleChat(reformatNoHp($user->telp), $request->wa_message);
         
             return redirect()->back()
                 ->with('status', $result['status'])
@@ -119,6 +124,13 @@ class VerifikasiController extends Controller
         foreach ($pembayarans as $key => $pembayaran) {
             $this->storePendapatanByVerifikasi($pembayaran);
         }
+
+        $user = User::find($request->id);
+        $status = $request->status == 1 ? "Diambil hari ini." : "Tidak Diambil dengan alasan " . $request->alasan ;
+        $pesan = "Selamat siang saudara " . $user->nama . ", Sampah anda telah " . $status;
+
+        $wa = new Whapify();
+        $wa->sendSingleChat("6282359351605", $pesan);
 
         return redirect()->back()
             ->with('status','success')

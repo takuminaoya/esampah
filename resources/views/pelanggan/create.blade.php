@@ -79,7 +79,7 @@
                                             <select class="form-select m-b-md @error('banjar') is-invalid @enderror" id="banjar" name="banjar" required>
                                                 <option value="">--Pilih Banjar--</option>
                                                 @foreach ($banjars as $banjar)
-                                                    <option value="{{ $banjar->id }}">{{ $banjar->nama }}</option>
+                                                    <option value="{{ $banjar->sid }}">{{ $banjar->nama_banjar }}</option>
                                                 @endforeach
                                             </select>
                                             @error('banjar')

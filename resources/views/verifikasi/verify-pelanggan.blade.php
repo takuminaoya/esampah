@@ -136,13 +136,13 @@
                                                         <div class="row mt-3">
                                                             <label for="wa_message" class="col-sm-2 col-form-label"><b>Pesan Peninjauan</b></label>
                                                             <div class="col-sm-10">
-                                                                <textarea class="form-control" id="wa_message" rows="3" placeholder="Masukkan pesan peninjauan">Halo {{ $customer->nama }}, kami dari SPS Ungasan akan melakukan peninjauan ke lokasi Anda dalam waktu dekat. Terima kasih.</textarea>
+                                                                <textarea class="form-control" id="wa_message" name="wa_message" rows="3" placeholder="Masukkan pesan peninjauan">Halo {{ $customer->nama }}, kami dari SPS Ungasan akan melakukan peninjauan ke lokasi Anda dalam waktu dekat. Terima kasih.</textarea>
                                                             </div>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
                                                         <div class="d-flex w-100 justify-content-between">
-                                                            <button type="button" class="btn btn-outline-success send-whatsapp" data-phone="{{ $customer->telp }}" data-name="{{ $customer->nama }}" data-csrf="{{ csrf_token() }}"><i class="fab fa-whatsapp"></i> Kirim Pesan Peninjauan</button>
+                                                            {{-- <button type="button" class="btn btn-outline-success send-whatsapp" data-phone="{{ $customer->telp }}" data-name="{{ $customer->nama }}" data-csrf="{{ csrf_token() }}"><i class="fab fa-whatsapp"></i> Kirim Pesan Peninjauan</button> --}}
                                                             <div class="d-flex gap-2">
                                                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                                                 <button type="submit" class="btn btn-primary">Verifikasi</button>

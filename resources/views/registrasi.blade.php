@@ -139,7 +139,7 @@
                             </div> 
                             <div class="col-lg-6 col-sm-12">
                                 <label for="password" class="form-label">Konfirmasi Password</label>
-                                <input type="password" class="form-control" id="konfirmasi_password" name="konfirmasi_password" required autocomplete="new-password">
+                                <input type="password" class="form-control" id="konfirmasi_password" name="password_confirmation" required autocomplete="new-password">
                             </div>
                         </div>
                     <div class="auth-submit mt-5">

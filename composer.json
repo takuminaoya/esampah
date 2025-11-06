@@ -25,8 +25,13 @@
     },
     "autoload": {
         "files": [
-            "app/helpers.php"
+            "app/helpers.php",
+            "app/Helpers/hlp_database.php",
+            "app/Helpers/hlp_misc.php",
+            "app/Helpers/hlp_application.php",
+            "app/Helpers/hlp_frontend.php"
         ],
+        
         "psr-4": {
             "App\\": "app/",
             "Database\\Factories\\": "database/factories/",

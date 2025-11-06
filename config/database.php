@@ -91,6 +91,26 @@ return [
             'prefix_indexes' => true,
         ],
 
+        'ungasan' => [
+            'driver' => 'mysql',
+            'url' => env('UDATABASE_URL'),
+            'host' => env('UDB_HOST', '127.0.0.1'),
+            'port' => env('UDB_PORT', '33061'),
+            'database' => env('UDB_DATABASE', 'forge'),
+            'username' => env('UDB_USERNAME', 'forge'),
+            'password' => env('UDB_PASSWORD', ''),
+            'unix_socket' => env('UDB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'prefix_indexes' => true,
+            'strict' => true,
+            'engine' => null,
+            'options' => extension_loaded('pdo_mysql') ? array_filter([
+                PDO::MYSQL_ATTR_SSL_CA => env('MYSQL_ATTR_SSL_CA'),
+            ]) : [],
+        ],
+
     ],
 
     /*

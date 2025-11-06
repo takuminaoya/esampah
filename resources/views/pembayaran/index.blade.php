@@ -74,4 +74,11 @@
         </div>
     </div>
     </div>
+    
+    @if (session()->has('status'))
+        @include('layout.backend.alert')
+    @endif
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script src="https://unpkg.com/@popperjs/core@2"></script>
 @endsection

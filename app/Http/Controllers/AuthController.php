@@ -4,10 +4,13 @@ namespace App\Http\Controllers;
 
 use App\Models\Banjar;
 use App\Models\KodeDistribusi;
+use App\Models\Ungasan\Penduduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 
 class AuthController extends Controller
@@ -15,10 +18,7 @@ class AuthController extends Controller
     public function getRegistrasi()
     {
         $token = env('TOKEN_API');
-        $url = 'https://ungasan.silagas.id/api/banjar?token='.$token;
-        $response = Http::get($url);
-        $datas = $response->object();
-        $banjars = $datas->data;
+        $banjars = DB::connection('ungasan')->table('banjars')->get();
         
         $distribusis = KodeDistribusi::all();
         return view('registrasi',compact(['banjars','distribusis']));
@@ -26,11 +26,9 @@ class AuthController extends Controller
 
     public function postRegistrasi(Request $request)
     {
-        $url = 'http://ungasan.silagas.id/api/penduduk/nik/'.$request->nik;
-        $response = Http::get($url);
-        $datas = $response->object();
+        $penduduk = Penduduk::where("nik", $request->nik)->first();
 
-        if($datas->data == 1){
+        if($penduduk){
             $request->validate([
                 'kategori' => 'required',
                 'nama' => 'required',
@@ -39,31 +37,23 @@ class AuthController extends Controller
                 'telp'  => 'required',
                 'banjar' => 'required',
                 'username' => 'required',
-                'password' => 'required',
-                'konfirmasi_password' => 'required'
+                'password' => 'required|confirmed',
             ]);
     
-            if ($request->password == $request->konfirmasi_password){
-                User::create([
-                    'nama' => $request->nama,
-                    'kode_distribusi_id' => $request->kategori,
-                    'nik'  => $request->nik,
-                    'alamat' => $request->alamat,
-                    'telp'  => $request->telp,
-                    'usaha' => $request->nama_usaha,
-                    'banjar_id' => $request->banjar,
-                    'username' => $request->username,
-                    'password' => bcrypt($request->password),
-                ]);
-                return redirect()->back()
-                    ->with('status','success')
-                    ->with('message','Regsitrasi berhasil. Tunggu verifikasi untuk mulai login');
-            }
-            else{
-                return redirect()->back()
-                    ->with('status','error')
-                    ->with('message','Registrasi Gagal. Periksa data yang Anda input');
-            }
+            User::create([
+                'nama' => $request->nama,
+                'kode_distribusi_id' => $request->kategori,
+                'nik'  => $request->nik,
+                'alamat' => $request->alamat,
+                'telp'  => $request->telp,
+                'usaha' => $request->nama_usaha,
+                'banjar_id' => $request->banjar,
+                'username' => $request->username,
+                'password' => Hash::make($request->password),
+            ]);
+            return redirect()->back()
+                ->with('status','success')
+                ->with('message','Regsitrasi berhasil. Tunggu verifikasi untuk mulai login');
         }else{
             return redirect()->back()
                     ->with('status','error')
